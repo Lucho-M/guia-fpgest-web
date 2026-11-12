@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía FPGEST Cascio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: barra blanca con el logo (como el sitio de Cascio) sobre un cuerpo oscuro con acentos rojos finos (estilo del proveedor del ERP).
+   Inicio = buscador grande + "elegí tu sector" + lista de tareas. Como mucho dos clics hasta cualquier guía. Un solo tema, oscuro, por decisión. */
+:root {
+  color-scheme: dark;
+  --bg: #0f1012;
+  --surface: #1a1b1e;
+  --raised: #242629;
+  --line: #36393e;
+  --fg: #f3f4f5;
+  --muted: #a7acb3;
+  --red: #e30613;            /* acento: barras finas, "qué no hacer" */
+  --red-soft: #3a1114;
+  --blue: #2f6db5;           /* azul Cascio: acciones */
+  --blue-hi: #7fb2ea;        /* azul legible sobre oscuro */
+  --blue-soft: #16283d;
+  --bar: #ffffff;
+  --bar-fg: #15171a;
+  --bar-line: #dfe2e6;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Segoe UI", Arial, sans-serif;
+  --font-body: "Barlow", "Segoe UI", Arial, sans-serif;
+  --font-mono: Consolas, "Courier New", monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 var(--font-body); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.1; text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+a { color: var(--blue-hi); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 2px; }
+b { font-weight: 600; }
+
+/* ---------- barra superior ---------- */
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bar); }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bar); color: var(--bar-fg); border-bottom: 3px solid var(--red); }
+.bar-in { position: relative; max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 18px; padding-block: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.brand { display: flex; align-items: center; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; color: inherit; }
+.brand img { height: 34px; width: auto; display: block; }
+.brand-txt { border-left: 2px solid var(--bar-line); padding-left: 12px; text-align: left; font: 700 20px/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.brand-txt small { display: block; font: 500 12px/1.3 var(--font-body); letter-spacing: 0; text-transform: none; color: #5d646d; }
+.topnav { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.topnav button { background: none; border: 0; padding: 10px 12px; cursor: pointer; font: 600 15px var(--font-display); text-transform: uppercase; letter-spacing: .06em; color: var(--bar-fg); border-bottom: 3px solid transparent; }
+.topnav button:hover, .topnav button.on { border-bottom-color: var(--red); }
+.topnav .cta { background: var(--blue); color: #fff; border-radius: 3px; border-bottom: 0; padding: 10px 14px; margin-left: 8px; }
+.topnav .cta:hover { background: #255a97; }
+.burger { display: none; margin-left: auto; background: none; border: 1px solid var(--bar-line); border-radius: 4px; padding: 8px 12px; cursor: pointer; font: 600 14px var(--font-display); text-transform: uppercase; letter-spacing: .06em; color: var(--bar-fg); }
+
+/* ---------- estructura ---------- */
+.main { max-width: 1180px; margin: 0 auto; padding-block: 30px 70px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.stack { display: flex; flex-direction: column; gap: 34px; }
+.eyebrow { font: 600 13px/1 var(--font-display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.redbar { width: 64px; height: 4px; background: var(--red); border: 0; margin: 0; }
+.lead { font-size: 18px; color: var(--muted); max-width: 62ch; margin: 0; }
+.sec-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.sec-head h2 { font-size: 26px; }
+.sec-head p { margin: 0; color: var(--muted); }
+
+/* ---------- inicio ---------- */
+.hero { display: flex; flex-direction: column; gap: 16px; padding-block: 14px 4px; }
+.hero h1 { font-size: clamp(38px, 6vw, 60px); font-weight: 700; }
+.searchbox { position: relative; max-width: 720px; }
+.searchbox input { width: 100%; padding: 16px 18px; font: 500 19px var(--font-body); color: var(--fg); background: var(--surface); border: 2px solid var(--line); border-radius: 4px; }
+.searchbox input::placeholder { color: var(--muted); }
+.searchbox input:focus { border-color: var(--blue-hi); outline: none; }
+.hint { font-size: 14px; color: var(--muted); margin: 0; }
+
+.sectors { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.sector-btn { display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 3px; cursor: pointer; }
+.sector-btn:hover { background: var(--raised); border-left-color: var(--red); }
+.sector-btn b { font: 600 20px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .04em; }
+.sector-btn small { color: var(--muted); font-size: 14px; }
+
+.tasks { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 3px; background: var(--surface); }
+.task { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px 14px; align-items: center; padding: 16px 18px; background: none; border: 0; border-top: 1px solid var(--line); text-align: left; cursor: pointer; width: 100%; }
+.task:first-child { border-top: 0; }
+.task:hover { background: var(--raised); }
+.task b { font-size: 18px; font-weight: 600; }
+.task small { grid-column: 1; color: var(--muted); font-size: 14px; }
+.task .chip { grid-row: 1 / span 2; grid-column: 2; }
+.task .go { grid-row: 1 / span 2; grid-column: 3; font: 700 22px var(--font-display); color: var(--red); }
+.empty { color: var(--muted); padding: 16px 18px; margin: 0; }
+
+.chip { display: inline-block; font: 600 12px/1 var(--font-display); text-transform: uppercase; letter-spacing: .1em; padding: 6px 9px; border-radius: 2px; white-space: nowrap; }
+.chip.Instructivo { background: var(--blue-soft); color: var(--blue-hi); }
+.chip.Procedimiento { border: 1px solid var(--muted); color: var(--fg); padding: 5px 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: 14px; color: var(--muted); }
+
+.mods { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.mod { display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; cursor: pointer; }
+.mod:hover { border-color: var(--blue-hi); }
+.mod.off { background: transparent; border-style: dashed; cursor: default; }
+.mod.off:hover { border-color: var(--line); }
+.mod b { font: 600 19px/1.1 var(--font-display); text-transform: uppercase; letter-spacing: .04em; }
+.mod small { color: var(--muted); font-size: 14px; }
+.mod .pg { font-size: 13px; color: var(--muted); }
+.mod .pg.on { color: var(--blue-hi); font-weight: 600; }
+
+.callout { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 3px; }
+.callout p { margin: 4px 0 0; color: var(--muted); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; background: var(--blue); color: #fff; padding: 12px 18px; border-radius: 3px; cursor: pointer; font: 600 16px var(--font-display); text-transform: uppercase; letter-spacing: .08em; text-decoration: none; }
+.btn:hover { background: #255a97; }
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--muted); }
+.btn.ghost:hover { border-color: var(--fg); background: var(--raised); }
+.btn:disabled { opacity: .6; cursor: default; }
+
+/* ---------- navegación interna ---------- */
+.back { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.back .btn { padding: 9px 14px; font-size: 15px; }
+.crumbs { font-size: 14px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px; }
+.crumbs button { background: none; border: 0; padding: 0; color: var(--blue-hi); cursor: pointer; text-decoration: underline; }
+
+/* ---------- guía ---------- */
+.guide { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 34px; align-items: start; }
+.g-main { display: flex; flex-direction: column; gap: 30px; min-width: 0; }
+.g-head { display: flex; flex-direction: column; gap: 12px; }
+.g-head h1 { font-size: clamp(32px, 4.6vw, 46px); font-weight: 700; }
+.g-side { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 84px); display: flex; flex-direction: column; gap: 10px; }
+.g-side .eyebrow { padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.side-link { text-align: left; background: none; border: 0; border-left: 3px solid transparent; padding: 8px 10px; cursor: pointer; color: var(--muted); }
+.side-link:hover { color: var(--fg); background: var(--surface); }
+.side-link.on { color: var(--fg); border-left-color: var(--red); background: var(--surface); font-weight: 600; }
+
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; margin: 0; }
+.fact { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fact.wide { grid-column: 1 / -1; }
+.fact dt { font: 600 12px/1 var(--font-display); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.fact dd { margin: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 14px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 99px; background: var(--raised); }
+.path { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.path span { background: var(--raised); border: 1px solid var(--line); border-radius: 3px; padding: 4px 9px; font-weight: 600; }
+.path i { color: var(--red); font-style: normal; font-weight: 700; }
+
+.gsec h2 { font-size: 24px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+.gsec h2::before { content: ""; width: 28px; height: 4px; background: var(--red); flex: none; }
+.no { display: flex; flex-direction: column; gap: 10px; }
+.no-item { background: var(--red-soft); border-left: 4px solid var(--red); border-radius: 3px; padding: 12px 16px; }
+.no-item p { margin: 0; max-width: 78ch; }
+.rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rules li { background: var(--surface); border-left: 4px solid var(--blue); border-radius: 3px; padding: 12px 16px; max-width: 86ch; }
+
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; counter-reset: paso; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 18px; display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 6px 16px; }
+.step::before { counter-increment: paso; content: counter(paso); grid-row: span 4; width: 40px; height: 40px; background: var(--fg); color: var(--bg); display: grid; place-items: center; font: 700 22px var(--font-display); border-radius: 2px; }
+.step h3 { font-size: 20px; align-self: center; }
+.step p { margin: 0; max-width: 76ch; }
+.shot { margin: 10px 0 0; padding: 0; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: #fff; cursor: zoom-in; display: block; width: 100%; }
+.shot img { display: block; width: 100%; height: auto; max-height: 480px; object-fit: contain; object-position: left top; }
+.shot-cap { font-size: 13px; color: var(--muted); }
+
+.errs { display: flex; flex-direction: column; gap: 10px; }
+.err { border: 1px solid var(--line); border-radius: 3px; background: var(--surface); overflow: hidden; }
+.err .q { padding: 12px 16px; font-weight: 600; border-bottom: 1px solid var(--line); }
+.err .q::before { content: "Problema"; display: block; font: 600 12px/1.6 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--red); }
+.err .a { padding: 12px 16px; }
+.err .a::before { content: "Cómo solucionarlo"; display: block; font: 600 12px/1.6 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: var(--blue-hi); }
+.related { display: flex; flex-wrap: wrap; gap: 8px; }
+.g-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding-top: 18px; }
+.source { font-size: 13px; color: var(--muted); margin: 0; }
+
+/* ---------- glosario, propuestas, tablas ---------- */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 3px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.tbl-wrap { overflow-x: auto; }
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th { text-align: left; font: 600 12px/1 var(--font-display); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); padding: 10px; border-bottom: 1px solid var(--line); }
+.tbl td { padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; min-width: 110px; }
+.tbl tr:last-child td { border-bottom: 0; }
+.tbl .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tbl select, .form select, .form input, .form textarea { padding: 11px 12px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); color: var(--fg); font: inherit; }
+.form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field.full { grid-column: 1 / -1; }
+.field > label, .field > .lbl { font: 600 12px/1 var(--font-display); text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+.field input, .field select, .field textarea { width: 100%; }
+.field textarea { min-height: 120px; resize: vertical; }
+.kinds { display: flex; flex-wrap: wrap; gap: 8px; }
+.kind { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 3px; padding: 10px 12px; background: var(--bg); cursor: pointer; }
+.field .kind input { width: auto; margin: 0; padding: 0; accent-color: var(--blue); }
+.kind:has(input:checked) { border-color: var(--blue-hi); background: var(--blue-soft); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.field.actions { flex-direction: row; }
+.okbox { background: var(--blue-soft); border-left: 4px solid var(--blue); border-radius: 3px; padding: 12px 16px; }
+.okbox.warn { background: var(--red-soft); border-left-color: var(--red); }
+.preview { font: 14px/1.5 var(--font-mono); white-space: pre-wrap; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; padding: 12px; user-select: all; overflow-x: auto; }
+.road-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 12px 2px; border-top: 1px solid var(--line); }
+.road-row:first-child { border-top: 0; }
+.road-row small { color: var(--muted); }
+.state { grid-row: 1 / span 2; grid-column: 2; align-self: center; font: 600 12px/1 var(--font-display); text-transform: uppercase; letter-spacing: .1em; padding: 6px 9px; border-radius: 2px; background: var(--raised); color: var(--muted); }
+.state.en-curso { background: var(--blue-soft); color: var(--blue-hi); }
+.state.hecha { background: var(--fg); color: var(--bg); }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { font-size: 14px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 99px; background: var(--bg); cursor: pointer; }
+.pill[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+.foot { border-top: 1px solid var(--line); margin-top: 40px; padding-top: 18px; font-size: 13px; color: var(--muted); }
+
+/* ---------- visor ---------- */
+.viewer { position: fixed; inset: 0; background: rgba(0, 0, 0, .92); display: grid; place-items: center; z-index: 50; cursor: zoom-out;
+  padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.viewer img { max-width: 100%; max-height: 100%; background: #fff; }
+
+@media (max-width: 900px) {
+  .guide { grid-template-columns: minmax(0, 1fr); }
+  .g-side { position: static; order: 2; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .form { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .burger { display: block; }
+  .topnav { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--bar); border-bottom: 3px solid var(--red); flex-direction: column; align-items: stretch; gap: 0; padding: 6px max(16px, env(safe-area-inset-right, 0px)) 14px max(16px, env(safe-area-inset-left, 0px)); }
+  .topnav.open { display: flex; }
+  .topnav button { text-align: left; padding: 14px 4px; border-bottom: 1px solid var(--bar-line); font-size: 17px; }
+  .topnav .cta { margin: 12px 0 0; text-align: center; }
+  .brand-txt small { display: none; }
+  .brand img { height: 26px; }
+  .brand-txt { font-size: 17px; }
+  .task { grid-template-columns: minmax(0, 1fr) auto; }
+  .task .chip { grid-row: auto; grid-column: 1; justify-self: start; }
+  .task .go { grid-column: 2; grid-row: 1 / span 3; }
+  .step { grid-template-columns: minmax(0, 1fr); }
+  .step::before { grid-row: auto; }
+}
+@media (prefers-reduced-motion: no-preference) { .sector-btn, .mod, .task, .btn { transition: background-color .12s, border-color .12s; } }
+</style>
+</head>
+<body>
+
+
+<header class="bar">
+  <div class="bar-in">
+    <button class="brand" id="home-btn" type="button" data-go="" aria-label="Ir al inicio">
+      <img src="img/logo-cascio.png" alt="Cascio">
+      <span class="brand-txt">Guía FPGEST<small>Instructivos y procedimientos</small></span>
+    </button>
+    <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="topnav">Menú</button>
+    <nav class="topnav" id="topnav" aria-label="Principal">
+      <button type="button" data-go="" data-nav="inicio">Inicio</button>
+      <button type="button" data-go="todas" data-nav="todas">Todas las guías</button>
+      <button type="button" data-go="glosario" data-nav="glosario">Glosario</button>
+      <button type="button" class="cta" data-go="propuestas">Proponer una mejora</button>
+    </nav>
+  </div>
+</header>
+
+<main class="main"><div class="stack" id="view"></div>
+  <div class="foot" id="foot"></div>
+</main>
+
+<div class="viewer" id="viewer" hidden><img id="viewer-img" alt=""></div>
+
+<script src="datos.js"></script>
+<script>
+(function () {
+  const D = window.GUIA_FPGEST;
+  const view = document.getElementById('view');
+  const $ = id => document.getElementById(id);
+  if (!D) { view.innerHTML = '<p class="empty">No se encontró <b>datos.js</b>. Tiene que estar en la misma carpeta que esta página.</p>'; return; }
+
+  const P = D.propuestas || { plan: [] };
+  const GLOS = D.glosario || [];
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const strip = s => String(s || '').replace(/<[^>]+>/g, ' ').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const slug = s => strip(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  const all = [];
+  D.modulos.forEach(m => m.guias.forEach(g => all.push(Object.assign({ modulo: m, noHacer: [], palabras: [], reglas: [], errores: [], relacionados: [], ruta: '' }, g))));
+  const byId = Object.fromEntries(all.map(g => [g.id, g]));
+  const sectorBySlug = Object.fromEntries(D.sectores.map(s => ['sector-' + slug(s), s]));
+  const name = g => g.tarea || g.titulo;
+  const hace = (g, s) => g.responsable.includes(s);
+  const afecta = (g, s) => g.sectores.includes(s);
+
+  $('foot').innerHTML = `Guía FPGEST · versión ${esc(D.version)} · actualizada el ${esc(D.actualizado)}` + (D.autor ? ` · ${esc(D.autor)}` : '') + `<br>Fuente: ${esc(D.fuente)}`;
+
+  /* ---------- búsqueda: entiende las palabras de la oficina gracias al glosario ---------- */
+  all.forEach(g => { g._h = strip([g.tarea, g.titulo, g.resumen, g.responsable, g.sectores.join(' '), g.ruta, g.palabras.join(' '), g.reglas.join(' '),
+    g.noHacer.map(n => n.texto).join(' '), g.pasos.map(p => p.titulo + ' ' + p.texto).join(' '), g.errores.map(e => e.problema + ' ' + e.solucion).join(' '), g.modulo.titulo].join(' ')); });
+  function search(qRaw) {
+    const q = strip(qRaw).trim();
+    if (!q) return all;
+    const terms = [q];
+    if (q.length > 2) GLOS.forEach(e => { const a = strip(e.decimos), b = strip(e.gest); if (a.includes(q) || q.includes(a)) terms.push(b); if (b.includes(q) || q.includes(b)) terms.push(a); });
+    const words = q.split(/\s+/).filter(w => w.length > 2);
+    return all.filter(g => terms.some(t => g._h.includes(t)) || (words.length > 1 && words.every(w => g._h.includes(w))));
+  }
+
+  /* ---------- piezas ---------- */
+  const taskRow = g => `<button class="task" type="button" data-go="${g.id}"><b>${esc(name(g))}</b><span class="chip ${g.tipo}">${g.tipo}</span><span class="go" aria-hidden="true">›</span><small>${esc(g.modulo.titulo)} · lo hace ${esc(g.responsable)}</small></button>`;
+  const taskList = (list, emptyMsg) => `<div class="tasks">${list.length ? list.map(taskRow).join('') : `<p class="empty">${emptyMsg}</p>`}</div>`;
+  const pathHtml = r => `<div class="path">${r.split('›').map(x => `<span>${esc(x.trim())}</span>`).join('<i aria-hidden="true">›</i>')}</div>`;
+  const backBar = crumbs => `<div class="back"><button class="btn ghost" type="button" data-back>← Volver</button><div class="crumbs">${crumbs}</div></div>`;
+  const crumbHome = `<button type="button" data-go="">Inicio</button>`;
+  const legend = `<div class="legend"><span><span class="chip Instructivo">Instructivo</span> &nbsp;cómo se hace en el sistema, paso a paso</span><span><span class="chip Procedimiento">Procedimiento</span> &nbsp;qué se hace, quién y cuándo</span></div>`;
+  const propCallout = `<div class="callout"><div><b>¿Falta algo o hay algo mal?</b><p>Contanos qué necesitás ver o hacer en el GEST y lo sumamos en la próxima versión.</p></div><button class="btn" type="button" data-go="propuestas">Proponer una mejora</button></div>`;
+  const modsHtml = () => D.modulos.map(m => m.guias.length
+    ? `<button class="mod" type="button" data-go="m-${m.id}"><b>${esc(m.titulo)}</b><small>${esc(m.descripcion)}</small><span class="pg on">${m.guias.length} guías ›</span></button>`
+    : `<div class="mod off"><b>${esc(m.titulo)}</b><small>${esc(m.descripcion)}</small><span class="pg">En preparación</span></div>`).join('');
+
+  function setNav(key) {
+    document.querySelectorAll('#topnav [data-nav]').forEach(b => b.classList.toggle('on', b.dataset.nav === key));
+    $('topnav').classList.remove('open'); $('burger').setAttribute('aria-expanded', 'false');
+  }
+
+  /* ---------- vistas ---------- */
+  let lastQuery = '';
+  function renderHome() {
+    view.innerHTML = `
+      <section class="hero">
+        <span class="eyebrow">Cascio · ERP FPGEST</span>
+        <h1>¿Qué necesitás hacer?</h1>
+        <hr class="redbar">
+        <div class="searchbox"><input id="q" type="search" placeholder="Escribí lo que buscás: recepción, kilos, devolver…" autocomplete="off" aria-label="Buscar una guía" value="${esc(lastQuery)}"></div>
+        <p class="hint">Podés buscar con tus palabras. Por ejemplo, «recepción» encuentra la pantalla <b>Entregas Proveedores</b>.</p>
+      </section>
+      <section id="results" hidden></section>
+      <div class="stack" id="home-rest">
+        <section><div class="sec-head"><h2>Elegí tu sector</h2><p>Te mostramos lo que hacés vos y lo que te afecta de otros sectores.</p></div>
+          <div class="sectors">${D.sectores.map(s => { const n = all.filter(g => hace(g, s) || afecta(g, s)).length;
+            return `<button class="sector-btn" type="button" data-go="sector-${slug(s)}"><b>${esc(s)}</b><small>${n ? n + (n === 1 ? ' guía' : ' guías') : 'Todavía sin guías'}</small></button>`; }).join('')}</div></section>
+        <section><div class="sec-head"><h2>Tareas</h2>${legend}</div>${taskList(all, 'Todavía no hay guías cargadas.')}</section>
+        <section><div class="sec-head"><h2>Módulos</h2></div><div class="mods">${modsHtml()}</div></section>
+        ${propCallout}
+      </div>`;
+    setNav('inicio');
+    const q = $('q');
+    const run = () => {
+      lastQuery = q.value;
+      const has = q.value.trim().length > 0, res = $('results');
+      $('home-rest').hidden = has; res.hidden = !has;
+      if (has) { const list = search(q.value);
+        res.innerHTML = `<div class="sec-head"><h2>${list.length} ${list.length === 1 ? 'resultado' : 'resultados'}</h2></div>` +
+          taskList(list, `No encontramos nada con «${esc(q.value)}». Probá con otra palabra, o pedí que se agregue con «Proponer una mejora».`); }
+    };
+    q.addEventListener('input', run); run();
+  }
+
+  function renderTodas() {
+    view.innerHTML = `${backBar(crumbHome + '<span>/</span><span>Todas las guías</span>')}
+      <div class="g-head"><span class="eyebrow">${all.length} guías</span><h1>Todas las guías</h1><hr class="redbar">${legend}</div>
+      ${D.modulos.filter(m => m.guias.length).map(m => `<section><div class="sec-head"><h2>${esc(m.titulo)}</h2><p>${esc(m.descripcion)}</p></div>${taskList(m.guias.map(g => byId[g.id]), '')}</section>`).join('')}
+      <section><div class="sec-head"><h2>Módulos</h2></div><div class="mods">${modsHtml()}</div></section>`;
+    setNav('todas');
+  }
+
+  function renderModule(m) {
+    view.innerHTML = `${backBar(crumbHome + '<span>/</span><span>' + esc(m.titulo) + '</span>')}
+      <div class="g-head"><span class="eyebrow">Módulo</span><h1>${esc(m.titulo)}</h1><hr class="redbar"><p class="lead">${esc(m.descripcion)}</p></div>
+      ${taskList(m.guias.map(g => byId[g.id]), 'Este módulo está en preparación.')}`;
+    setNav('');
+  }
+
+  function renderSector(s) {
+    const mine = all.filter(g => hace(g, s)), others = all.filter(g => !hace(g, s) && afecta(g, s));
+    view.innerHTML = `${backBar(crumbHome + '<span>/</span><span>' + esc(s) + '</span>')}
+      <div class="g-head"><span class="eyebrow">Sector</span><h1>${esc(s)}</h1><hr class="redbar"></div>
+      <section><div class="sec-head"><h2>Lo que hacés vos</h2><p>Tareas que ejecuta ${esc(s)}.</p></div>${taskList(mine, 'Todavía no hay guías para este sector. Si necesitás una, pedila con «Proponer una mejora».')}</section>
+      <section><div class="sec-head"><h2>Lo que te afecta</h2><p>Lo hace otro sector, pero cambia tu trabajo.</p></div>${taskList(others, 'Por ahora no hay tareas de otros sectores que te afecten.')}</section>
+      ${propCallout}`;
+    setNav('');
+  }
+
+  function renderGuide(g) {
+    const sibs = g.modulo.guias.map(x => byId[x.id]);
+    const rel = g.relacionados.filter(id => byId[id]);
+    const steps = g.pasos.map(p => `<li class="step"><h3>${esc(p.titulo)}</h3><p>${p.texto}</p>
+      ${p.img ? `<button class="shot" type="button" data-img="${esc(p.img)}" aria-label="Ampliar la captura"><img src="${esc(p.img)}" alt="Pantalla del GEST: ${esc(p.titulo)}" loading="lazy"></button><span class="shot-cap">Tocá la imagen para agrandarla.</span>` : ''}</li>`).join('');
+    view.innerHTML = `${backBar(crumbHome + '<span>/</span><button type="button" data-go="m-' + g.modulo.id + '">' + esc(g.modulo.titulo) + '</button>')}
+      <div class="guide">
+        <article class="g-main">
+          <div class="g-head"><span><span class="chip ${g.tipo}">${g.tipo}</span></span><h1>${esc(name(g))}</h1><hr class="redbar"><p class="lead">${esc(g.resumen)}</p></div>
+          <dl class="facts">
+            <div class="fact"><dt>Quién lo hace</dt><dd>${esc(g.responsable)}</dd></div>
+            <div class="fact"><dt>Cuándo</dt><dd>${esc(g.cuando)}</dd></div>
+            <div class="fact"><dt>A quién afecta</dt><dd class="tags">${g.sectores.map(s => `<span class="tag">${esc(s)}</span>`).join('')}</dd></div>
+            ${g.ruta ? `<div class="fact wide"><dt>Dónde está en el GEST</dt><dd>${pathHtml(g.ruta)}</dd></div>` : ''}
+          </dl>
+          ${g.noHacer.length ? `<section class="gsec"><h2>Qué no hacer</h2><div class="no">${g.noHacer.map(n => `<div class="no-item"><p>${n.texto}</p>${n.img ? `<button class="shot" type="button" data-img="${esc(n.img)}" aria-label="Ampliar la captura"><img src="${esc(n.img)}" alt="Ejemplo de lo que no hay que hacer" loading="lazy"></button>` : ''}</div>`).join('')}</div></section>` : ''}
+          ${g.reglas.length ? `<section class="gsec"><h2>Reglas</h2><ul class="rules">${g.reglas.map(r => `<li>${r}</li>`).join('')}</ul></section>` : ''}
+          <section class="gsec"><h2>Pasos</h2><ol class="steps">${steps}</ol></section>
+          ${g.errores.length ? `<section class="gsec"><h2>Si algo sale mal</h2><div class="errs">${g.errores.map(e => `<div class="err"><div class="q">${esc(e.problema)}</div><div class="a">${esc(e.solucion)}</div></div>`).join('')}</div></section>` : ''}
+          ${rel.length ? `<section class="gsec"><h2>Guías relacionadas</h2><div class="related">${rel.map(id => `<button class="btn ghost" type="button" data-go="${id}">${esc(name(byId[id]))}</button>`).join('')}</div></section>` : ''}
+          <div class="g-foot"><p class="source">También se llama «${esc(g.titulo)}» · Manual interno, ${esc(g.fuente)}</p>
+            <button class="btn ghost" type="button" data-prop-guia="${g.id}">¿Algo para corregir? Proponer mejora</button></div>
+        </article>
+        <aside class="g-side" aria-label="Otras guías del módulo"><span class="eyebrow">${esc(g.modulo.titulo)}</span>
+          ${sibs.map(x => `<button class="side-link${x.id === g.id ? ' on' : ''}" type="button" data-go="${x.id}">${esc(name(x))}</button>`).join('')}</aside>
+      </div>`;
+    setNav('');
+  }
+
+  function renderGlosario() {
+    view.innerHTML = `${backBar(crumbHome + '<span>/</span><span>Glosario</span>')}
+      <div class="g-head"><span class="eyebrow">Para entendernos</span><h1>Glosario</h1><hr class="redbar"><p class="lead">Cómo le decimos en la oficina y cómo figura escrito en el GEST. El buscador entiende las dos formas.</p></div>
+      <div class="panel"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Cómo le decimos</th><th>Cómo figura en el GEST</th><th>Dónde está</th></tr></thead><tbody>
+        ${GLOS.map(e => `<tr><td><b>${esc(e.decimos)}</b></td><td>${esc(e.gest)}</td><td>${e.ruta ? pathHtml(e.ruta) : '—'}</td></tr>`).join('') || '<tr><td colspan="3">Todavía no hay términos cargados.</td></tr>'}
+      </tbody></table></div></div>
+      <div class="callout"><div><b>¿Hay una palabra que no está?</b><p>Avisanos y la agregamos.</p></div><button class="btn" type="button" data-go="propuestas">Proponer una mejora</button></div>`;
+    setNav('glosario');
+  }
+
+  /* ---------- propuestas ---------- */
+  const API = '/api/propuestas';
+  let registro = null, propPrefill = null;
+  async function hayRegistro() {
+    if (registro !== null) return registro;
+    if (!/^https?:$/.test(location.protocol)) return (registro = false);
+    try { const r = await fetch(API, { cache: 'no-store' }); registro = r.ok && (r.headers.get('content-type') || '').includes('json'); } catch (_) { registro = false; }
+    return registro;
+  }
+  const TIPOS = [['ver', 'Necesito ver una guía de…'], ['hacer', 'Necesito poder hacer…'], ['corregir', 'Hay un error en una guía'], ['otra', 'Otra mejora']];
+  const ESTADOS = { 'planificada': 'Planificada', 'en-curso': 'En curso', 'hecha': 'Hecha' };
+  const planHtml = () => { const plan = P.plan || [];
+    return `<section><div class="sec-head"><h2>Próximas actualizaciones</h2></div><div class="panel">${plan.length
+      ? `<div>${plan.map(r => `<div class="road-row"><b>${esc(r.titulo)}</b><span class="state ${esc(r.estado)}">${esc(ESTADOS[r.estado] || r.estado)}</span><small>${esc(r.detalle || '')}${r.pedido ? ' · Pedido por ' + esc(r.pedido) : ''}</small></div>`).join('')}</div>`
+      : '<p class="empty">Todavía no hay mejoras planificadas.</p>'}</div></section>`; };
+  const propHead = () => `${backBar(crumbHome + '<span>/</span><span>Proponer una mejora</span>')}
+      <div class="g-head"><span class="eyebrow">Tu opinión mejora la guía</span><h1>Proponer una mejora</h1><hr class="redbar">
+        <p class="lead">¿Qué necesitás ver o hacer en el GEST que todavía no está en la guía? ¿Encontraste algo mal? Contalo acá.</p></div>`;
+
+  function renderPropuestas() {
+    const pre = propPrefill || {}; propPrefill = null;
+    setNav('');
+    if (P.formulario) {
+      const g = pre.guia && byId[pre.guia]; let url = P.formulario;
+      if (g && P.formularioCampoGuia) url += (url.includes('?') ? '&' : '?') + 'usp=pp_url&' + encodeURIComponent(P.formularioCampoGuia) + '=' + encodeURIComponent(g.titulo);
+      view.innerHTML = `${propHead()}<div class="callout"><div><b>${g ? 'Propuesta sobre: ' + esc(name(g)) : 'Formulario de propuestas'}</b><p>Se abre en otra pestaña. Lleva dos minutos.</p></div>
+        <a class="btn" id="p-form-link" href="${esc(url)}" target="_blank" rel="noopener">Abrir el formulario</a></div>${planHtml()}`;
+      return;
+    }
+    const guideOpts = D.modulos.map(m => m.guias.length
+      ? `<optgroup label="${esc(m.titulo)}">${m.guias.map(g => `<option value="${esc(g.titulo)}"${pre.guia === g.id ? ' selected' : ''}>${esc(name(byId[g.id]))}</option>`).join('')}</optgroup>`
+      : `<option value="Módulo ${esc(m.titulo)}">Módulo ${esc(m.titulo)} (en preparación)</option>`).join('');
+    view.innerHTML = `${propHead()}
+      <form class="panel form" id="prop-form" novalidate>
+        <div class="field full"><span class="lbl">Qué tipo de propuesta es</span>
+          <div class="kinds">${TIPOS.map(([v, t], i) => `<label class="kind"><input type="radio" name="tipo" id="p-tipo-${v}" value="${v}"${(pre.tipo ? pre.tipo === v : i === 0) ? ' checked' : ''}> ${t}</label>`).join('')}</div></div>
+        <div class="field"><label for="p-nombre">Tu nombre</label><input id="p-nombre" autocomplete="name"></div>
+        <div class="field"><label for="p-sector">Tu sector</label><select id="p-sector"><option value="">Elegí…</option>${D.sectores.map(s => `<option>${esc(s)}</option>`).join('')}<option>Otro</option></select></div>
+        <div class="field full"><label for="p-guia">Sobre qué guía o módulo (opcional)</label><select id="p-guia"><option value="">Ninguno en particular</option>${guideOpts}</select></div>
+        <div class="field full"><label for="p-desc">Contalo con tus palabras</label>
+          <textarea id="p-desc" placeholder="Ej.: Necesito una guía para cargar un remito de venta a obra. Hoy no sé qué justificante elegir."></textarea></div>
+        <div class="field"><label for="p-prio">¿Qué tan importante es?</label><select id="p-prio"><option>Me frena el trabajo</option><option selected>Lo hago seguido</option><option>Sería útil</option></select></div>
+        <div class="field full actions" id="p-send"><button class="btn" type="submit" id="p-submit">Registrar propuesta</button><span class="hint" id="p-msg"></span></div>
+        <div class="field full" id="p-ok" hidden><div class="okbox"><b>Propuesta registrada.</b> <span id="p-ok-txt"></span></div>
+          <div class="actions"><button class="btn ghost" type="button" id="p-new">Registrar otra</button></div></div>
+        <div class="field full" id="p-out" hidden>
+          <div class="okbox warn"><b>Esta copia de la guía no está conectada al registro.</b> Copiá el texto y pasáselo al responsable de la guía.</div>
+          <div class="preview" id="p-text"></div>
+          <div class="actions"><button class="btn ghost" type="button" id="p-copy">Copiar texto</button><span class="hint" id="p-copied"></span></div></div>
+      </form>
+      <div class="callout" id="p-bandeja-link" hidden><div><b>Propuestas registradas</b><p id="p-count"></p></div><button class="btn ghost" type="button" data-go="bandeja">Ver bandeja</button></div>
+      ${planHtml()}`;
+    const f = $('prop-form');
+    hayRegistro().then(ok => { if (!ok || !$('p-count')) return; fetch(API, { cache: 'no-store' }).then(r => r.json()).then(d => {
+      if (!$('p-count')) return;
+      const n = d.propuestas.length, ab = d.propuestas.filter(x => !['Hecha', 'Descartada'].includes(x.estado)).length;
+      $('p-count').textContent = `${n} en total · ${ab} sin resolver`; $('p-bandeja-link').hidden = false; }).catch(() => {}); });
+    f.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      const desc = $('p-desc').value.trim(), msg = $('p-msg');
+      if (!desc) { msg.textContent = 'Falta contar la propuesta en el cuadro de texto.'; $('p-desc').focus(); return; }
+      msg.textContent = '';
+      const datos = { tipo: TIPOS.find(t => t[0] === f.querySelector('input[name="tipo"]:checked').value)[1].replace('…', ''),
+        nombre: $('p-nombre').value.trim(), sector: $('p-sector').value, guia: $('p-guia').value || 'General',
+        importancia: $('p-prio').value, descripcion: desc, version_guia: D.version };
+      if (await hayRegistro()) {
+        const btn = $('p-submit'); btn.disabled = true; msg.textContent = 'Guardando…';
+        try {
+          const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(datos) });
+          if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || 'Error ' + r.status);
+          const res = await r.json(); msg.textContent = '';
+          $('p-ok-txt').textContent = `Quedó con el número ${res.propuesta.id}. La vas a ver en «Próximas actualizaciones» cuando se incorpore.`;
+          f.querySelectorAll(':scope > .field').forEach(el => { el.hidden = el.id !== 'p-ok'; });
+        } catch (err) { msg.textContent = 'No se pudo guardar: ' + err.message + '. Probá de nuevo en un momento.'; }
+        btn.disabled = false; return;
+      }
+      $('p-text').textContent = `PROPUESTA DE MEJORA – Guía FPGEST (v${D.version})\nFecha: ${new Date().toLocaleDateString('es-AR')}\nDe: ${datos.nombre || '(sin nombre)'} – ${datos.sector || '(sin sector)'}\nTipo: ${datos.tipo}\nGuía / módulo: ${datos.guia}\nImportancia: ${datos.importancia}\n\n${desc}`;
+      $('p-out').hidden = false; $('p-copied').textContent = ''; $('p-out').scrollIntoView({ block: 'nearest' });
+    });
+    $('p-new').onclick = () => renderPropuestas();
+    $('p-copy').onclick = () => { const t = $('p-text');
+      const done = ok => { $('p-copied').textContent = ok ? 'Copiado.' : 'Seleccioná el texto y copialo con Ctrl+C.'; };
+      const sel = () => { const r = document.createRange(); r.selectNodeContents(t); const s = getSelection(); s.removeAllRanges(); s.addRange(r); };
+      try { navigator.clipboard.writeText(t.textContent).then(() => done(true), () => { sel(); done(false); }); } catch (_) { sel(); done(false); } };
+  }
+
+  let bandejaFiltro = 'abiertas';
+  async function renderBandeja() {
+    view.innerHTML = `${backBar(crumbHome + '<span>/</span><button type="button" data-go="propuestas">Proponer una mejora</button><span>/</span><span>Bandeja</span>')}
+      <div class="g-head"><span class="eyebrow">Para el responsable de la guía</span><h1>Bandeja de propuestas</h1><hr class="redbar"><p class="lead">Todo lo que propusieron los usuarios. Cambiá el estado a medida que lo incorporás.</p></div>
+      <div class="panel" id="b-panel"><p class="empty">Cargando…</p></div>`;
+    setNav('');
+    const panel = $('b-panel');
+    if (!(await hayRegistro())) { panel.innerHTML = `<p class="empty">La bandeja solo funciona abriendo la guía desde el servidor (${esc(P.direccion || 'http://SERVIDOR:8080')}).</p>`; return; }
+    let d;
+    try { d = await (await fetch(API, { cache: 'no-store' })).json(); } catch (_) { panel.innerHTML = '<p class="empty">No se pudo leer el registro. Revisá que el servidor esté encendido.</p>'; return; }
+    const draw = () => {
+      let rows = d.propuestas.slice().reverse();
+      if (bandejaFiltro === 'abiertas') rows = rows.filter(x => !['Hecha', 'Descartada'].includes(x.estado));
+      else if (bandejaFiltro !== 'todas') rows = rows.filter(x => x.estado === bandejaFiltro);
+      const cnt = e => d.propuestas.filter(x => x.estado === e).length;
+      panel.innerHTML = `<div class="filters">${[['abiertas', 'Sin resolver'], ['todas', 'Todas'], ...d.estados.map(e => [e, e])].map(([v, t]) =>
+          `<button type="button" class="pill" data-bfilt="${esc(v)}" aria-pressed="${bandejaFiltro === v}">${esc(t)}${d.estados.includes(v) ? ' · ' + cnt(v) : ''}</button>`).join('')}</div>
+        ${rows.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Fecha</th><th>Propuesta</th><th>De</th><th>Importancia</th><th>Estado</th></tr></thead><tbody>
+          ${rows.map(x => `<tr><td class="num">${esc(x.fecha)}<br><small class="hint">#${esc(x.id)}</small></td>
+            <td style="min-width:260px"><b>${esc(x.tipo)}</b> · ${esc(x.guia)}<br>${esc(x.descripcion)}</td>
+            <td>${esc(x.nombre || '—')}<br><small class="hint">${esc(x.sector || '')}</small></td><td>${esc(x.importancia)}</td>
+            <td><select class="b-estado" id="b-estado-${esc(x.id)}" data-id="${esc(x.id)}" aria-label="Estado de la propuesta ${esc(x.id)}">${d.estados.map(e => `<option${e === x.estado ? ' selected' : ''}>${e}</option>`).join('')}</select></td></tr>`).join('')}
+          </tbody></table></div>` : '<p class="empty">No hay propuestas en este filtro.</p>'}`;
+    };
+    draw();
+    panel.addEventListener('click', e => { const b = e.target.closest('[data-bfilt]'); if (b) { bandejaFiltro = b.dataset.bfilt; draw(); } });
+    panel.addEventListener('change', async e => { const sel = e.target.closest('.b-estado'); if (!sel) return;
+      try { const r = await fetch(`${API}/${sel.dataset.id}/estado`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ estado: sel.value }) });
+        if (!r.ok) throw 0; d.propuestas.find(x => x.id === sel.dataset.id).estado = sel.value; draw();
+      } catch (_) { sel.insertAdjacentHTML('afterend', '<br><small class="hint">No se guardó</small>'); } });
+  }
+
+  /* ---------- rutas ---------- */
+  function route() {
+    const h = decodeURIComponent(location.hash.slice(1));
+    const m = h.startsWith('m-') && D.modulos.find(x => x.id === h.slice(2));
+    if (h === 'propuestas') renderPropuestas();
+    else if (h === 'bandeja') renderBandeja();
+    else if (h === 'glosario') renderGlosario();
+    else if (h === 'todas') renderTodas();
+    else if (byId[h]) renderGuide(byId[h]);
+    else if (sectorBySlug[h]) renderSector(sectorBySlug[h]);
+    else if (m) renderModule(m);
+    else renderHome();
+    window.scrollTo(0, 0);
+  }
+  function go(id) { if (location.hash.slice(1) === id) route(); else location.hash = id; }
+  let depth = 0;   // cuántas pantallas se abrieron desde el inicio: decide si "Volver" retrocede o va al inicio
+  window.addEventListener('hashchange', route);
+
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-go],[data-img],[data-prop-guia],[data-back]');
+    if (!t) return;
+    if (t.dataset.img) { $('viewer-img').src = t.dataset.img; $('viewer').hidden = false; return; }
+    if (t.dataset.propGuia) { propPrefill = { guia: t.dataset.propGuia, tipo: 'corregir' }; depth++; go('propuestas'); return; }
+    if (t.hasAttribute('data-back')) { if (depth > 0) { depth--; history.back(); } else go(''); return; }
+    if (t.dataset.go === '') { lastQuery = ''; depth = 0; } else depth++;
+    go(t.dataset.go);
+  });
+  $('viewer').onclick = () => { $('viewer').hidden = true; };
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') $('viewer').hidden = true; });
+  $('burger').onclick = () => { const n = $('topnav'); n.classList.toggle('open'); $('burger').setAttribute('aria-expanded', n.classList.contains('open')); };
+  route();
+})();
+</script>
+
+</body>
+</html>
